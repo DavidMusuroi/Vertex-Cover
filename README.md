@@ -1,6 +1,6 @@
 # Vertex-Cover
 
-This project is better detailed in the Report PDF.
+The project details can be found in the Report PDF.
 
 ## Setup
 
