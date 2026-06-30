@@ -2,19 +2,19 @@
 #pragma once
 #include <stdio.h>
 #include <stdbool.h>
-#define max_nodes 1200 // Limita maximă de noduri (suficient pentru testele tale)
+#define max_nodes 1200 // Maximum limit of nodes
 
 typedef struct {
-    int adj[max_nodes][max_nodes]; // Matrice de adiacenta
-    int n;                 // Numar noduri
-    bool active[max_nodes];    // Daca nodul mai exista in graf
+    int adj[max_nodes][max_nodes]; // Adjacency Matrix
+    int n;                 // Number of nodes
+    bool active[max_nodes];    // If the node still exists in the graph
 } Graph;
 
 void read_graph(Graph *g) {
     int m, u, v;
     scanf("%d %d", &g->n, &m);
     
-    // Initializare
+    // Initialization
     for(int i = 0; i < g->n; i++){
         g->active[i] = true;
         for(int j = 0; j < g->n; j++)
@@ -30,7 +30,7 @@ void read_graph(Graph *g) {
     }
 }
 
-// Helper: Verifica daca graful mai are muchii
+// Helper: Check if the graph still has edges
 bool is_empty(Graph *g){
     for(int i = 0; i < g->n; i++){
         if (!g->active[i]) 
@@ -43,7 +43,7 @@ bool is_empty(Graph *g){
     return true;
 }
 
-// Helper: Sterge un nod (il marcheaza inactiv)
+// Helper: Delete a node (mark it as inactive)
 void remove_node(Graph *g, int node) {
     g->active[node] = false;
 }

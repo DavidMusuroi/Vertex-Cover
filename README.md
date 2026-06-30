@@ -1,11 +1,17 @@
 # Vertex-Cover
 
-Arhiva conține:
+This project is better detailed in the Report PDF.
 
-raportul în format pdf un director 'src' ce conține toate fișierele sursă, precum și un executabil 'run' cu ajutorul căruia se poate rula întregul proiect. un director 'results' ce conține resultatele rulării întregului proiect, folosite în redactarea raportului; în acest director se vor salva întotdeauna, automat, rezultatele rulării întregului proiect (un fișier csv ce conține toate informațiile despre timpii și acuratețea soluțiilor obținute de către cei 3 algoritmi utilizați în rezolvarea problemei; grafice cu evoluția timpului de execuție în raport cu inputul propus)
+## Setup
 
-Pentru rularea proiectului:
+chmod +x run
+./run
 
-cd ./src/ ./run
+---
 
-Nu a fost nevoie de un director pentru fișiere test, deoarece testele se generează de fiecare dată la rularea proiectului (fapt realizat de 'main.py').
+## Archive containts
+
+--> A PDF report
+--> A directory *src* containing all source files
+--> An executable *run* that can be used to execute the entire project
+--> And finally a directory *results* containing the results of running the entire project, used in writing the report; this directory will always automatically store the results of running the entire project (a CSV file containing all information about execution times and solution accuracy obtained by the three algorithms used to solve the problem; graphs showing the evolution of execution time with respect to the proposed input).

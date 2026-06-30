@@ -4,7 +4,7 @@
 int solve_greedy(Graph g){
     int count = 0;
     while(!is_empty(&g)){
-        // 1. Gaseste nodul cu grad maxim
+        // 1. Find the node with the maximum degree
         int max_degree = -1;
         int best_node = -1;
 
@@ -22,7 +22,7 @@ int solve_greedy(Graph g){
                 best_node = i;
             }
         }
-        // 2. Adauga in solutie
+        // 2. Add to the solution
         if(best_node != -1){
             count++;
             remove_node(&g, best_node);

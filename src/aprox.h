@@ -4,7 +4,7 @@
 int solve_approx(Graph g){
     int count = 0;
     while(!is_empty(&g)){
-        // 1. Gaseste o muchie (u, v)
+        // 1. Find an edge (u, v)
         int u = -1, v = -1;
         for(int i = 0; i < g.n && u == -1; i++){
             if(!g.active[i]) 
@@ -17,7 +17,7 @@ int solve_approx(Graph g){
                 }
             }
         }
-        // 2. Adauga AMBELE in solutie
+        // 2. Add BOTH to the solution
         if(u != -1){
             count += 2;
             remove_node(&g, u);

@@ -1,16 +1,15 @@
 #pragma once
 #include "graph_functions.h"
 
-// Varianta optimizata: Primeste pointer (*g) pentru a NU copia graful la fiecare pas
+// Optimized version: receives pointer to avoid copying the graph at each step
 int solve_exact(Graph *g) { 
-    // Conditia de oprire: daca nu mai sunt muchii, am terminat
+    // Base condition: if there are no more edges, we are done
     if (is_empty(g)) 
         return 0;
 
-    // Gaseste prima muchie disponibila (u, v)
+    // Find the first available edge (u, v)
     int u = -1, v = -1;
 
-    // Cautam muchia
     for(int i = 0; i < g->n; i++){
         if(!g->active[i]) continue;
         
@@ -18,34 +17,35 @@ int solve_exact(Graph *g) {
             if(g->active[j] && g->adj[i][j]){
                 u = i; 
                 v = j;
-                break; // Iesim din bucla interioara
+                break;
             }
         }
-        // Verificare pentru a iesi si din bucla exterioara
         if(u != -1) break; 
     }
 
-    // --- RAMURA 1: Il alegem pe U ---
-    // 1. Modificam graful original (Backtracking: Do) - marcam nodul ca sters
+    // --- BRANCH 1: choose U ---
+
+    // 1. Modify original graph (Backtracking: Do) - mark node as removed
     g->active[u] = false; 
     
-    // 2. Apelam recursiv
+    // 2. Recursive call
     int res1 = 1 + solve_exact(g);
     
-    // 3. Refacem graful (Backtracking: Undo) - punem nodul la loc
+    // 3. Restore graph (Backtracking: Undo) - put node back
     g->active[u] = true; 
 
 
-    // --- RAMURA 2: Il alegem pe V ---
-    // 1. Modificam
+    // --- BRANCH 2: choose V ---
+    
+    // 1. Modify graph
     g->active[v] = false;
     
-    // 2. Apelam recursiv
+    // 2. Recursive call
     int res2 = 1 + solve_exact(g);
     
-    // 3. Refacem
+    // 3. Restore graph
     g->active[v] = true;
 
-    // Returnam minimul dintre cele doua ramuri
+    // Return minimum of the two branches
     return (res1 < res2) ? res1 : res2;
 }

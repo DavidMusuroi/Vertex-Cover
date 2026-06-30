@@ -1,16 +1,15 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Citim fisierul
+# Read the csv file
 df = pd.read_csv("../results/results.csv")
 
-# Împărțim datele
+# Divde data
 dense = df.iloc[:15]
 sparse = df.iloc[16:30]
 bipartit = df.iloc[31:45]
 random = df.iloc[46:60]
 
-# Functie de desenare + salvare
 def draw_and_save(data, title, filename):
     x = data["Nodes"]
 
@@ -30,16 +29,16 @@ def draw_and_save(data, title, filename):
     plt.savefig(filename, dpi=300, bbox_inches="tight")
     plt.close()
 
-# Grafic pentru dense
+# Graph for dense
 draw_and_save(dense, "Dense_1-10", "../results/Dense.png")
 
-# Grafic pentru sparse
+# Graph for sparse
 draw_and_save(sparse, "Sparse_11-20", "../results/Sparse.png")
 
-# Grafic pentru bipartit
-draw_and_save(sparse, "Bipartit_21-30", "../results/Bipartit.png")
+# Graph for bipartite
+draw_and_save(sparse, "Bipartite_21-30", "../results/Bipartit.png")
 
-# Grafic pentru random
+# Graph for random
 draw_and_save(sparse, "Random_31-40", "../results/Random.png")
 
-print("Graficele au fost salvate ca fisiere PNG.")
+print("The graphs have been saved as PNGs.")

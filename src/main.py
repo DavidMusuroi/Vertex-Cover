@@ -4,40 +4,40 @@ import os
 import csv
 import time
 
-# --- CONFIGURARE ---
+# --- CONFIGURATION ---
 C_SOURCE = "main.c"
-# Detectare automata a executabilului in functie de OS
+# Automatic detection of executable depending on OS
 EXECUTABLE = "main.exe" if os.name == 'nt' else "./main"
 OUTPUT_CSV = "../results/results.csv"
 
-# Pragul peste care nu mai rulam algoritmul Exact (Backtracking)
-# N=30 este limita rezonabila (aprox 1 miliard operatii). N=50 ar dura secole.
+# Threshold above which we do not run the Exact (Backtracking) algorithm
+# N=30 is a reasonable limit (approx. 1 billion operations). N=50 would take ages.
 EXACT_ALGORITHM_LIMIT = 30 
 
 def compile_c():
-    """Compileaza codul C."""
-    print(f"Compilare {C_SOURCE}...")
+    """Compiles the C code."""
+    print(f"Compiling {C_SOURCE}...")
     cmd = ["gcc", C_SOURCE, "-o", "main", "-O2"]
     if os.name == 'nt':
         cmd = ["gcc", C_SOURCE, "-o", "main.exe", "-O2"]
     
     result = subprocess.run(cmd)
     if result.returncode != 0:
-        print("Eroare la compilare! Verifica codul C.")
+        print("Compilation error! Check C code.")
         exit(1)
-    print("Compilare reusita.\n")
+    print("Compilation successful.\n")
 
 def generate_graph_str(n, edges):
-    """Converteste lista de muchii in formatul acceptat de programul C."""
+    """Converts edge list into the format expected by the C program."""
     input_str = f"{n} {len(edges)}\n"
     for u, v in edges:
         input_str += f"{u} {v}\n"
     return input_str
 
 def get_bipartite_edges(n, density):
-    """Genereaza muchii pentru un graf bipartit."""
+    """Generates edges for a bipartite graph."""
     edges = []
-    # Impartim nodurile in doua seturi: U (0..mid-1) si V (mid..n-1)
+    # Split nodes into two sets: U (0...mid-1) and V (mid...n-1)
     mid = n // 2
     for u in range(mid):
         for v in range(mid, n):
@@ -46,7 +46,7 @@ def get_bipartite_edges(n, density):
     return edges
 
 def get_standard_edges(n, density):
-    """Genereaza muchii pentru un graf general (Dense/Sparse/Random)."""
+    """Generates edges for a general graph (Dense/Sparse/Random)."""
     edges = []
     for i in range(n):
         for j in range(i + 1, n):
@@ -56,41 +56,41 @@ def get_standard_edges(n, density):
 
 def generate_test_case(n, category):
     """
-    Returneaza string-ul de input pentru un graf bazat pe categorie.
+    Returns the input string for a graph based on category.
     """
     edges = []
     
     if category == "Dense":
-        # Probabilitate mare de muchie (0.7 - 0.9)
+        # High probability of edge (0.7 to 0.9)
         edges = get_standard_edges(n, density=0.8)
         
     elif category == "Sparse":
-        # Probabilitate mica (0.1 - 0.2)
-        # Pentru N mare, reducem si mai mult densitatea sa nu fie prea greu I/O
+        # Low probability (0.1 - 0.2)
+        # For large N, reduce density further to avoid heavy I/O
         dens = 0.2 if n < 100 else 0.05
         edges = get_standard_edges(n, density=dens)
         
     elif category == "Random":
-        # Probabilitate medie (0.5)
+        # Medium probability (0.5)
         edges = get_standard_edges(n, density=0.5)
         
-    elif category == "Bipartit":
-        # Graf bipartit cu densitate medie intre partitii
+    elif category == "Bipartite":
+        # Bipartite graph with medium inter-partition density
         edges = get_bipartite_edges(n, density=0.5)
         
     return generate_graph_str(n, edges)
 
 def run_single_test(test_id, n, category):
-    """Ruleaza executabilul C pentru un singur test."""
+    """Runs the C executable for a single test."""
     
-    # Generam datele
+    # Generate input data
     input_data = generate_test_case(n, category)
     
-    # Decidem daca rulam algoritmul Exact
+    # Decide whether to run Exact algorithm
     skip_exact = True if n > EXACT_ALGORITHM_LIMIT else False
     arg_skip = "1" if skip_exact else "0"
     
-    # Rulam procesul
+    # Run process
     try:
         process = subprocess.Popen(
             [EXECUTABLE, arg_skip],
@@ -102,33 +102,33 @@ def run_single_test(test_id, n, category):
         stdout, stderr = process.communicate(input=input_data)
         
         if process.returncode != 0:
-            print(f"Eroare Runtime la {test_id}: {stderr}")
+            print(f"Runtime error at {test_id}: {stderr}")
             return None
             
-        # Parsam linia CSV returnata de C
-        # Format C: N,TimeEx,TimeAp,TimeGr,SolEx,SolAp,SolGr
+        # Parse CSV line returned by C program
+        # C format: N,TimeEx,TimeAp,TimeGr,SolEx,SolAp,SolGr
         line = stdout.strip()
         parts = line.split(',')
         
-        # Ajustam outputul pentru Exact daca a fost sarit
+        # Adjust output for Exact if it was skipped
         if skip_exact:
-            # In C apare ca 0.000000 si -1, le facem N/A pentru raport
-            parts[1] = "N/A" # Time_Exact
-            parts[4] = "N/A" # Sol_Exact
+            # In C it appears as 0.000000 and -1, convert to N/A for reporting
+            parts[1] = "N/A"  # Time_Exact
+            parts[4] = "N/A"  # Sol_Exact
             
         return [test_id, category] + parts
 
     except Exception as e:
-        print(f"Exceptie Python la {test_id}: {e}")
+        print(f"Python exception at {test_id}: {e}")
         return None
 
 def main():
     compile_c()
     
-    # Configurare experiment
+    # Experiment configuration
     sizes = [10, 20, 30, 50, 100, 200, 300, 400, 500, 600, 700, 800, 1000, 1100, 1200]
     runs_per_case = 1
-    categories = ["Dense", "Sparse", "Bipartit", "Random"]
+    categories = ["Dense", "Sparse", "Bipartite", "Random"]
     
     results = []
     
@@ -154,7 +154,7 @@ def main():
                 
                 test_counter += 1
 
-    # Salvare in CSV
+    # Save to CSV
     header = ["TestID", "Category", "Nodes", "Time_Exact", "Time_Approx", "Time_Greedy", "Sol_Exact", "Sol_Approx", "Sol_Greedy"]
     
     try:
@@ -162,10 +162,10 @@ def main():
             writer = csv.writer(f)
             writer.writerow(header)
             writer.writerows(results)
-        print(f"\n Rezultate salvate cu succes in '{OUTPUT_CSV}'")
-        print(f"Total teste generate: {len(results)}")
+        print(f"\n Results successfully saved to '{OUTPUT_CSV}'")
+        print(f"Total tests generated: {len(results)}")
     except IOError as e:
-        print(f"\n Eroare la scrierea fisierului CSV: {e}")
+        print(f"\n Error writing CSV file: {e}")
 
 if __name__ == "__main__":
     main()
